@@ -1,0 +1,18 @@
+{
+  "name": "propine_q1",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/phaobinh868/propine_q1.git",
+  "author": "DanhVT",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "up": "docker-compose -f docker-compose.yml up -d",
+    "down": "docker-compose -f docker-compose.yml down"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "dotenv": "^16.0.3",
+    "yargs": "^17.7.1"
+  }
+}

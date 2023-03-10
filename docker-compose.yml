@@ -1,0 +1,54 @@
+version: "3"
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    volumes:
+      - $PWD/storage/rabbitmq:/var/lib/rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    env_file:
+      - ./.env
+    networks:
+      - cluster-network
+  redis:
+    image: redis:latest
+    restart: always
+    command: redis-server --save 20 1 --loglevel warning --protected-mode no
+    volumes:
+      - $PWD/storage/redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - cluster-network
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - $PWD/storage/mongodb:/data/db
+    networks:
+      - cluster-network
+  data-service:
+    build:
+      context: ./data-service
+      dockerfile: Dockerfile
+    volumes:
+      - ./data-service:/usr/app/
+      - /app/data-service/node_modules
+    restart: on-failure
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./data-service/.env
+    networks:
+      - cluster-network
+    depends_on:
+      - rabbitmq
+      - redis
+      - mongo
+networks:
+ cluster-network:
+  driver: bridge
